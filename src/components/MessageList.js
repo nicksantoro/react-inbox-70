@@ -4,11 +4,13 @@ import Message from './Message'
 class MessageList extends Component {
   render() {
     const messagesL = this.props.messages.map((message, idx) =>
-      <div>
-        <Message 
-          message={message}
-        />
-      </div> 
+    
+      <Message 
+        key={idx}
+        message={message}
+        toggleStar={this.props.toggleStar}
+      />
+      
     )
     return (
       <div>

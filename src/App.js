@@ -72,12 +72,23 @@ class App extends Component {
     ]
   }
   
+  toggleStar = (id=5) => {
+    let {messages} = this.state
+    messages.filter(message => {
+      if(message.id === id) {
+        message.starred = !message.starred
+      }
+    })
+    this.setState({messages})
+  }
+  
   render() {
     return (
       <div className="App">
         <Toolbar />
         <MessageList  
           messages={this.state.messages}
+          toggleStar={this.toggleStar}
         />
       </div>
     );
