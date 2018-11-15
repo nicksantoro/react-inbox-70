@@ -2,7 +2,15 @@ import React, { Component } from 'react'
 
 export default class Message extends Component {
   render() {
-    console.log(this.props.message, "this is")
+
+    let label = this.props.message.labels.map(label => 
+     
+        <span class="label label-warning">{label}</span>
+   
+    )
+
+    // console.log(this.props.message, "this is")
+    console.log(label, "labels")
     return (
       <div>
         <div className="row message unread">
@@ -18,6 +26,7 @@ export default class Message extends Component {
             </div>
           </div>
           <div className="col-xs-11">
+          {label}
             <a href="#">
               {/* Here is some message text that has a bunch of stuff */}
               {this.props.message.subject}
