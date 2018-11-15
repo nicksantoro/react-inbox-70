@@ -19,7 +19,7 @@ export default class Message extends Component {
           <div className="col-xs-1">
             <div className="row">
               <div className="col-xs-2">
-                <input type="checkbox" checked={this.props.message.selected} />
+                <input onClick={() => this.props.messageSelected(this.props.message.id)} type="checkbox" checked={this.props.message.selected} />
                 {/* {`${this.props.message.selected ? "checked" : "" }`} */}
               </div>
               <div className="col-xs-2">

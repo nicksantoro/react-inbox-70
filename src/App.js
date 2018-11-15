@@ -71,8 +71,21 @@ class App extends Component {
       }
     ]
   }
+
+  messageSelected = (id) => {
+    let {messages} = this.state
+    console.log(id, "message selected method")
+    messages.forEach(message => {
+      if(message.id === id) {
+        message.selected ? message.selected = !message.selected : message.selected = true;
+      }
+    })
+    this.setState({messages})
+  }
+
+
   
-  toggleStar = (id=5) => {
+  toggleStar = (id) => {
     let {messages} = this.state
     messages.filter(message => {
       if(message.id === id) {
@@ -89,6 +102,7 @@ class App extends Component {
         <MessageList  
           messages={this.state.messages}
           toggleStar={this.toggleStar}
+          messageSelected={this.messageSelected}
         />
       </div>
     );
