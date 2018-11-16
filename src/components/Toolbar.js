@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 
 export default class Toolbar extends Component {
   render() {
+    console.log(this.props)
     return (
       <div>
         <div className="row toolbar">
@@ -11,7 +12,7 @@ export default class Toolbar extends Component {
               unread messages
             </p>
 
-            <button className="btn btn-default">
+            <button onClick={this.props.toggleAll} className="btn btn-default">
               <i className="fa fa-square-o"></i>
             </button>
 
@@ -19,7 +20,7 @@ export default class Toolbar extends Component {
               Mark As Read
             </button>
 
-            <button className="btn btn-default" disabled="disabled">
+            <button onClick={this.props.toggleRead} className="btn btn-default" disabled={this.props.selectStatus()}>
               Mark As Unread
             </button>
 

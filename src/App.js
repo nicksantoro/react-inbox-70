@@ -72,6 +72,41 @@ class App extends Component {
     ]
   }
 
+  // messageRead = () => {
+  //   let{ messages } = this.state
+  //   messages.filter(message => {
+  //     if()
+  //   })
+  //   this.setState({messages})
+  // }
+
+  selectStatus = () => {
+    let { messages } = this.state;
+    let disabledStatus = "";
+    if(messages.filter(message => message.selected).length === 0) {
+      disabledStatus = "disabled" 
+    } 
+    return disabledStatus
+  }
+
+  toggleRead = () => {
+    let { messages } = this.state;
+    const read = messages.filter(message => message.selected).filter(selectedMessage => selectedMessage.read)
+    read.forEach(message => {
+      !message.read ? message.read = true : message.read = false;
+    })
+    this.setState({messages})
+  }
+
+  toggleAll = () => {
+    let { messages } = this.state;
+    const checked = messages.filter(message => !message.selected)
+    messages.forEach(message => {
+      message.selected = (checked.length <= 0) ? false : true;
+    })
+    this.setState({messages})
+  }
+
   messageSelected = (id) => {
     let {messages} = this.state
     console.log(id, "message selected method")
@@ -96,13 +131,20 @@ class App extends Component {
   }
   
   render() {
+    console.log(this.state.messages)
     return (
       <div className="App">
-        <Toolbar />
+        <Toolbar 
+          toggleAll={this.toggleAll}
+          messageRead={this.messageRead}
+          selectStatus={this.selectStatus}
+          toggleRead={this.toggleRead}
+        />
         <MessageList  
           messages={this.state.messages}
           toggleStar={this.toggleStar}
           messageSelected={this.messageSelected}
+          selectStatus={this.selectStatus}
         />
       </div>
     );

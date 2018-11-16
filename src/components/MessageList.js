@@ -10,6 +10,7 @@ class MessageList extends Component {
         message={message}
         toggleStar={this.props.toggleStar}
         messageSelected={this.props.messageSelected}
+        selectStatus={this.props.selectStatus}
       />
       
     )
