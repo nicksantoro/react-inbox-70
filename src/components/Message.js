@@ -13,8 +13,7 @@ export default class Message extends Component {
       <div>
         <div 
           className={`row message ${this.props.message.read ? "read" : "unread" } 
-          ${this.props.message.selected ? "selected" : ""}`}
-          
+          ${this.props.message.selected ? "selected" : ""}`} 
         >
           <div className="col-xs-1">
             <div className="row">
