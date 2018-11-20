@@ -1,6 +1,20 @@
 import React, { Component } from 'react'
+import ComposeForm from './ComposeForm'
 
 export default class Toolbar extends Component {
+  state = {
+    isFormShown: false
+  }
+
+  toggleForm = () => {
+    this.setState({isFormShown: !this.state.isFormShown})
+  }
+
+  closeForm = () => {
+    this.setState({isFormShown: false})
+  }
+
+
   render() {
     const selectIcon = this.props.selectStatus();
     const selectDisabled = selectIcon==='square'? 'disabled': '';
@@ -15,6 +29,12 @@ export default class Toolbar extends Component {
               <span className="badge badge">{unReadMessagesCount}</span>
               {unReadMessagesCount === 1 ? "unread message" : "unread messages"}
             </p>
+
+            { this.state.isFormShown && <ComposeForm addMessage={this.props.addMessage} closeForm={this.closeForm}/> }
+
+            <button className="btn btn-danger" onClick={this.toggleForm}>
+              <i className="fa fa-plus"></i>
+            </button>
 
             <button onClick={this.props.toggleAll} className="btn btn-default">
               <i className={`fa fa-${selectIcon}-o`}></i>

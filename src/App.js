@@ -82,10 +82,9 @@ class App extends Component {
   }
 
   componentDidMount() {
-    // let messges = awit fetch ('url')
-    this.setState({
-      messages
-    })
+    fetch('http://localhost:8082/api/messages')
+    .then( res => res.json() )
+    .then( messages => this.setState({messages}) ) 
   }
 
   selectStatus = () => {
@@ -105,6 +104,9 @@ class App extends Component {
   }
 
   markRead = read => e => {
+    this.markMessageRead(read)
+
+    return; // stop 
     // read===true - mark selected messages as read
     // read===false - mark selected messages as unread
     const { messages } = this.state;
@@ -117,37 +119,103 @@ class App extends Component {
     this.setState({ messages: updatedMessages })
   }
 
+  markMessageRead = async (read) => {
+    // const prevMessage = this.state.messages.find( m => m.id === id );
+    const messageIds = this.state.messages.filter(m => m.selected).map(m => m.id)
+    const body = {messageIds, command: "read", read }
+    const response = await fetch('http://localhost:8082/api/messages', {
+      method: 'PATCH',
+      body: JSON.stringify(body),
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      }
+    })
+    const messages = await response.json();
+    this.setState({messages})
+    //this.setState({messages: [...this.state.messages, person]})
+  }
+
   deleteMessage = () => {
-    const { messages } = this.state;
-    const updatedMessages = messages.filter(message => !message.selected)
-    this.setState({ messages: updatedMessages })
+    this.delMessage()
+
+    return;
+    // const { messages } = this.state;
+    // const updatedMessages = messages.filter(message => !message.selected)
+    // this.setState({ messages: updatedMessages })
+  }
+
+  async delMessage() {
+    const messageIds = this.state.messages.filter(m => m.selected).map(m => m.id)
+    const body = {messageIds, command: "delete"  }
+    const response = await fetch('http://localhost:8082/api/messages', {
+      method: 'PATCH',
+      body: JSON.stringify(body),
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      }
+    })
+    const messages = await response.json();
+    this.setState({messages})
+
   }
 
   applyLabel = e => {
-    console.log('[applyLabel]', e.target.value)
-    const { messages } = this.state;
+
+    console.log('[applyLabel]', e.target.value);
     const label = e.target.value;
-    const updatedMessages = messages.map(message => {
-      if(message.selected && !message.labels.includes(label)) {
-        return {...message, labels: [...message.labels, label] }
+    this.addL(label);
+
+    return;
+  };
+
+  async addL (label) {
+    const messageIds = this.state.messages.filter(m => m.selected).map(m => m.id);
+    const body = {messageIds, command: "addLabel", label };
+    const response = await fetch('http://localhost:8082/api/messages', {
+      method: 'PATCH',
+      body: JSON.stringify(body),
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
       }
-      return message
-    })
-    this.setState({ messages: updatedMessages })
-  }
+    });
+    const messages = await response.json();
+    this.setState({messages})
+
+  };
 
   removeLabel = e => {
-    const { messages } = this.state;
     const label = e.target.value;
-    const updatedMessages = messages.map(message => {
-      if(message.selected && message.labels.includes(label)) {
-        const labels = message.labels.filter(l => l !== label );
-        return {...message, labels}
+    this.remLabel(label);
+    return;
+    // const updatedMessages = messages.map(message => {
+    //   if(message.selected && message.labels.includes(label)) {
+    //     const labels = message.labels.filter(l => l !== label );
+    //     return {...message, labels}
+    //   }
+    //   return message;
+    // });
+    // this.setState({ messages: updatedMessages })
+  };
+
+  async remLabel (label) {
+   const messageIds = this.state.messages.filter(m => m.selected).map(m => m.id);
+   const body = {messageIds, command: "removeLabel", label };
+    const response = await fetch('http://localhost:8082/api/messages', {
+      method: 'PATCH',
+      body: JSON.stringify(body),
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
       }
-      return message;
-    })
-    this.setState({ messages: updatedMessages })
+    });
+    const messages = await response.json();
+    this.setState({messages})
   }
+
+  
 
   toggleAll = () => {
     let { messages } = this.state;
@@ -171,16 +239,44 @@ class App extends Component {
   }
 
   toggleStar = (id) => {
-    let {messages} = this.state
-    const updatedMessages = messages.map(message => {
-      if(message.id === id) {
-        return { ...message, starred:!message.starred }
-      }
-      return message;
-    })
-    this.setState({messages: updatedMessages})
+
+    this.starMessage(id)
+
+    return; // stop
+
+
+    // let {messages} = this.state
+    // const updatedMessages = messages.map(message => {
+    //   if(message.id === id) {
+    //     return { ...message, starred:!message.starred }
+    //   }
+    //   return message;
+    // })
+    // this.setState({messages: updatedMessages})
   }
   
+  async starMessage(id) {
+    const prevMessage = this.state.messages.find( m => m.id === id );
+    const body = {messageIds: [id], command: "star", star: !prevMessage.starred }
+    const response = await fetch('http://localhost:8082/api/messages', {
+      method: 'PATCH',
+      body: JSON.stringify(body),
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      }
+    })
+    const messages = await response.json();
+    this.setState({messages})
+    //this.setState({messages: [...this.state.messages, person]})
+  }
+
+  addMessage = message => {
+    this.setState({messages: [...this.state.messages, message]})
+  }
+
+
+
   render() {
     console.log(this.state.messages)
     return (
@@ -195,6 +291,7 @@ class App extends Component {
           messages={this.state.messages}
           applyLabel={this.applyLabel}
           removeLabel={this.removeLabel}
+          addMessage={this.addMessage}
         />
         <MessageList  
           messages={this.state.messages}
